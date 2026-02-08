@@ -1,33 +1,32 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useTitle } from "../hooks/useTitle";
 import Backup from "../assets/images/backup.png"
 
 export const MovieDetail = () => {
   const params = useParams();
   const [movie, setMovie] = useState({});
   
+  //eslint-disable-next-line
+  const pageTitle = useTitle(movie.title);
+
   const image = movie.poster_path ? `https://image.tmdb.org/t/p/w500/${movie.poster_path}` : Backup ;
 
   useEffect(() => {
     async function fetchMovie(){
       const response = await fetch(`https://api.themoviedb.org/3/movie/${params.id}?api_key=b80d59c33d6d57ed9c7e3713f91c188a`);
-
       const json = await response.json()
       setMovie(json);
       console.log(json);
     }
     fetchMovie();
-  }, [params.id])
-
-  useEffect(() => {
-    document.title = `${movie.title} / Cinemate`;
-  });
+  }, [params.id]);
 
   return (
     <main>
       <section className="flex justify-around flex-wrap py-5">
         <div className="max-w-sm">
-          <img className="rounded" src={image} alt="" />
+          <img className="rounded" src={image} alt={movie.title} />
         </div>
         <div className="max-w-2xl text-gray-700 text-lg dark:text-white">
           <h1 className="text-4xl font-bold my-3 text-center lg:text-left">{movie.title}</h1>
@@ -72,7 +71,7 @@ export const MovieDetail = () => {
             <a href={`https://www.imdb.com/title/${movie.imdb_id}`} target="_blank" rel="noreferrer">{movie.imdb_id}</a>
           </p>
 
-        </div>     
+        </div>
       </section>
     </main>
   )
